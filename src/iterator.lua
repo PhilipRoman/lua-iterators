@@ -142,6 +142,18 @@ function M.map(self, mapper)
     end)
 end
 
+function M.where(self, filter)
+    check(self, filter)
+    return M.iterator(self, "where", function(self1, callback)
+        check(self1, callback)
+        self:forEach(function(...)
+        	if filter(...) then
+                callback(...)
+            end
+        end)
+    end)
+end
+
 function M.limit(self, n)
     checkIterator(self)
     n = tonumber(n)

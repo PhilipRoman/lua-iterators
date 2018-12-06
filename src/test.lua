@@ -1,8 +1,9 @@
 local iterator = require 'iterator'
 local f = require 'functions'
 
-local a = iterator.values { "foo", "bar", "baz", "foo" }
+local a = iterator.values { "foo", "bar", "baz", "coffee", "abc", "abcd" }
                   :map(string.upper)
+                  :where(function(x) return #x == 3 end)
                   :map(f.format "(%s)")
                   :concat(", ")
 print(a)
