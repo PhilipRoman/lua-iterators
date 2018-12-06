@@ -162,9 +162,9 @@ function M.distinct(self, mapper)
         check(self1, callback)
         local seen = {}
         self:forEach(function(...)
-        	local mapped = mapper(...)
-        	if not seen[mapped] then
-        		seen[mapped] = true
+            local mapped = mapper(...)
+            if not seen[mapped] then
+                seen[mapped] = true
                 callback(...)
             end
         end)
