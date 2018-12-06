@@ -1,3 +1,4 @@
+local F = require 'functions'
 local M = {}
 
 local function checkIterator(x)
@@ -148,6 +149,22 @@ function M.where(self, filter)
         check(self1, callback)
         self:forEach(function(...)
         	if filter(...) then
+                callback(...)
+            end
+        end)
+    end)
+end
+
+function M.distinct(self, mapper)
+    checkIterator(self)
+    mapper = mapper or F.identity()
+    return M.iterator(self, "distinct", function(self1, callback)
+        check(self1, callback)
+        local seen = {}
+        self:forEach(function(...)
+        	local mapped = mapper(...)
+        	if not seen[mapped] then
+        		seen[mapped] = true
                 callback(...)
             end
         end)
