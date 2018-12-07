@@ -8,9 +8,13 @@ local function checkIterator(x)
 end
 
 local function checkFunction(x)
-    if type(x) ~= "function" then
-        error(tostring(x) .. " is not a callback!")
+    if type(x) == "function" then
+        return
     end
+    if type(x) == "table" and getmetatable(x).__call then
+        return
+    end
+    error(tostring(x) .. " is not a callback!")
 end
 
 local function check(iterator, callback)
@@ -128,12 +132,14 @@ function M.range(from, to, step)
     end)
 end
 
-function M.forEach(self, callback)
+function M.forEach(self, ...)
+    local callback = F.eval(...)
     check(self, callback)
     self(callback)
 end
 
-function M.map(self, mapper)
+function M.map(self, ...)
+    local mapper = F.eval(...)
     check(self, mapper)
     return M.iterator(self, "map", function(self1, callback)
         check(self1, callback)
@@ -143,7 +149,8 @@ function M.map(self, mapper)
     end)
 end
 
-function M.where(self, filter)
+function M.where(self, ...)
+    local filter = F.eval(...)
     check(self, filter)
     return M.iterator(self, "where", function(self1, callback)
         check(self1, callback)
@@ -155,9 +162,9 @@ function M.where(self, filter)
     end)
 end
 
-function M.distinct(self, mapper)
+function M.distinct(self, ...)
     checkIterator(self)
-    mapper = mapper or F.identity()
+    local mapper = select('#', ...) > 0 and F.eval(...) or F.identity()
     return M.iterator(self, "distinct", function(self1, callback)
         check(self1, callback)
         local seen = {}
